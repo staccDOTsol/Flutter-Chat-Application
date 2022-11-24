@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-
-const kMessageTextFieldDecoration =  InputDecoration.collapsed(
+const kMessageTextFieldDecoration = InputDecoration.collapsed(
   hintText: 'Type Something...',
   hintStyle: TextStyle(color: Colors.blueGrey),
 );
@@ -14,3 +12,4 @@ const kMessageContainerDecoration = BoxDecoration(
 );
 
 // final kEmailInputDecoration =
+

@@ -5,7 +5,8 @@ import 'package:letschat/components/colors.dart';
 import 'package:page_transition/page_transition.dart';
 import 'chat_screen.dart';
 
-
+import 'chat_screen2.dart';
+import 'chat_screen3.dart';
 
 class LoginScreen extends StatefulWidget {
   static String id = 'login_screen';
@@ -26,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _text1 = TextEditingController();
   final _text2 = TextEditingController();
 
-
   @override
   void dispose() {
     _text1.dispose();
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _toggle(){
+  void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
     });
@@ -69,7 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: SafeArea(
           child: ListView(
-
             children: <Widget>[
               SizedBox(
                 height: 70.0,
@@ -85,14 +84,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 48.0,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0,vertical: 10.0),
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                 child: emailInput(),
               ),
               SizedBox(
                 height: 8.0,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0,vertical: 10.0),
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                 child: passInput(),
               ),
               SizedBox(
@@ -105,32 +104,107 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TabButton(
                     btnColor: PalletteColors.primaryRed,
                     btnTxtColor: Colors.white,
-                    btnText: "Log In",
+                    btnText: "yellow pill",
                     btnFunction: () async {
-                      _text1.text.isEmpty ? _validate = false : _validate = true;
-                      _text2.text.isEmpty ? _validate = false : _validate = true;
-                      setState((){
+                      _text1.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      _text2.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      setState(() {
                         // showSpinner = true;
                       });
 
-                      try{
-                        final loggedInUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
-                        if(loggedInUser != null){
+                      try {
+                        final loggedInUser =
+                            await _auth.signInWithEmailAndPassword(
+                                email: email, password: password);
+                        if (loggedInUser != null) {
                           Navigator.pushNamed(context, ChatScreen.id);
                           setState(() {
                             // showSpinner = false;
                           });
-
                         }
-                      }catch(e){
+                      } catch (e) {
                         print(e);
                       }
-
                     },
                   ),
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: Hero(
+                  tag: "button2",
+                  child: TabButton(
+                    btnColor: PalletteColors.primaryRed,
+                    btnTxtColor: Colors.white,
+                    btnText: "blue pill",
+                    btnFunction: () async {
+                      _text1.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      _text2.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      setState(() {
+                        // showSpinner = true;
+                      });
 
+                      try {
+                        final loggedInUser =
+                            await _auth.signInWithEmailAndPassword(
+                                email: email, password: password);
+                        if (loggedInUser != null) {
+                          Navigator.pushNamed(context, ChatScreen2.id);
+                          setState(() {
+                            // showSpinner = false;
+                          });
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: Hero(
+                  tag: "button2",
+                  child: TabButton(
+                    btnColor: PalletteColors.primaryRed,
+                    btnTxtColor: Colors.white,
+                    btnText: "red pill",
+                    btnFunction: () async {
+                      _text1.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      _text2.text.isEmpty
+                          ? _validate = false
+                          : _validate = true;
+                      setState(() {
+                        // showSpinner = true;
+                      });
+
+                      try {
+                        final loggedInUser =
+                            await _auth.signInWithEmailAndPassword(
+                                email: email, password: password);
+                        if (loggedInUser != null) {
+                          Navigator.pushNamed(context, ChatScreen3.id);
+                          setState(() {
+                            // showSpinner = false;
+                          });
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 10.0,
               ),
@@ -146,8 +220,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(context, PageTransition(
-                          type: PageTransitionType.fade, child: LoginScreen()));
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              child: LoginScreen()));
                     },
                     child: Text(
                       " Sign Up",
@@ -157,132 +234,114 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-
                 ],
               ),
-
-
-
-
             ],
           ),
         ),
       ),
     );
   }
+
   Widget emailInput() {
-      return Theme(
-        child: TextField(
-          onChanged: (value){
-            email = value;
-          },
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            labelText: "Email ID",
-            errorText: _validate ? 'Please enter your email' : null,
-            prefixIcon: Icon(Icons.mail_outline),
-            labelStyle: TextStyle(fontSize: 14,color: Colors.grey.shade400),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
-            ),
-
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
-            ),
-
-            errorStyle: TextStyle(fontSize: 14),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40),
-                borderSide: BorderSide(
-                  color: Colors.red,
-                )
-            ),
-          )
-          ,
-
-
-          textInputAction: TextInputAction.next,
+    return Theme(
+      child: TextField(
+        onChanged: (value) {
+          email = value;
+        },
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
         ),
-        data: Theme.of(context)
-            .copyWith(accentColor: PalletteColors.primaryRed,),
-      );
-    }
-
-    Widget passInput() {
-
-      return Theme(
-        data: Theme.of(context)
-            .copyWith(accentColor: PalletteColors.primaryRed,),
-        child: TextField(
-          onChanged: (value){
-            password = value;
-          },
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            prefixIcon: Icon(Icons.vpn_key,),
-            labelText: "Password",
-            errorText: _validate ? 'Password Can\'t Be Empty' : null,
-            labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
-            ),
-
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40),
-                borderSide: BorderSide(
-                  color: Colors.red,
-                )
-            ),
-
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-              ),
-            ),
-
-            errorStyle: TextStyle(fontSize: 14),
-            suffixIcon: IconButton(
-              icon: Icon(
-
-                _obscureText ? Icons.visibility : Icons.visibility_off,
-                color: PalletteColors.primaryGrey,
-              ),
-              onPressed: _toggle,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          labelText: "Email ID",
+          errorText: _validate ? 'Please enter your email' : null,
+          prefixIcon: Icon(Icons.mail_outline),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
             ),
           ),
-          textInputAction: TextInputAction.done,
-          obscureText: _obscureText,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
         ),
-      );
-    }
-
-
+        textInputAction: TextInputAction.next,
+      ),
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
+      ),
+    );
   }
 
-
-
+  Widget passInput() {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
+      ),
+      child: TextField(
+        onChanged: (value) {
+          password = value;
+        },
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.vpn_key,
+          ),
+          labelText: "Password",
+          errorText: _validate ? 'Password Can\'t Be Empty' : null,
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: PalletteColors.primaryGrey,
+            ),
+            onPressed: _toggle,
+          ),
+        ),
+        textInputAction: TextInputAction.done,
+        obscureText: _obscureText,
+      ),
+    );
+  }
+}

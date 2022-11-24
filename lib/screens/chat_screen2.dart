@@ -14,20 +14,20 @@ final _firestore = FirebaseFirestore.instance;
 User? loggedInuser;
 final focusNode = FocusNode();
 
-class ChatScreen extends StatefulWidget {
-  static String id = 'chat_screen';
+class ChatScreen2 extends StatefulWidget {
+  static String id = 'chat_screen2';
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatScreen2State createState() => _ChatScreen2State();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreen2State extends State<ChatScreen2> {
   final controller = TextEditingController();
   final _auth = FirebaseAuth.instance;
   bool isEmojiVisible = false;
   bool isKeyboardVisible = false;
   var messageText;
-  static String topic = 'roblox';
+  static String topic = 'Minecraft';
   Future<String> fetchAlbum() async {
     var uuid = loggedInuser!.uid;
 
@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'https://newapps.herokuapp.com/?uuid=' +
             uuid +
             '&topic=' +
-            uuid +
+            this.getTopic() +
             '&question=' +
             messageText)));
     if (response.statusCode == 200) {
@@ -139,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Navigator.pop(context);
               }),
         ],
-        title: Text('Messages'),
+        title: Text('messages2'),
         backgroundColor: PalletteColors.primaryRed,
       ),
       body: SafeArea(
@@ -182,12 +182,17 @@ class _ChatScreenState extends State<ChatScreen> {
                           focusNode: focusNode,
                           onSubmitted: (value) async {
                             controller.clear();
-                            _firestore.collection(loggedInuser!.uid).add({
+                            /*_firestore.collection('messages2').add({
                               'sender': loggedInuser!.email,
-                              'text': messageText + '!!!',
+                              'text': messageText,
+                              'timestamp': Timestamp.now(),
+                            }); */
+
+                            _firestore.collection('messages2').add({
+                              'sender': loggedInuser!.uid, //'RobloxBot',
+                              'text': await fetchAlbum(),
                               'timestamp': Timestamp.now(),
                             });
-                            await fetchAlbum();
                           },
                           maxLines: null,
                           controller: controller,
@@ -207,12 +212,17 @@ class _ChatScreenState extends State<ChatScreen> {
                           icon: new Icon(Icons.send),
                           onPressed: () async {
                             controller.clear();
-                            _firestore.collection(loggedInuser!.uid).add({
+                            /*_firestore.collection('messages2').add({
                               'sender': loggedInuser!.email,
-                              'text': messageText + '!!!',
+                              'text': messageText,
+                              'timestamp': Timestamp.now(),
+                            }); */
+
+                            _firestore.collection('messages2').add({
+                              'sender': loggedInuser!.uid, //'RobloxBot',
+                              'text': await fetchAlbum(),
                               'timestamp': Timestamp.now(),
                             });
-                            await fetchAlbum();
                           },
                           color: Colors.blueGrey,
                         ),
@@ -250,7 +260,7 @@ class MessagesStream extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
-          .collection(loggedInuser!.uid)
+          .collection('messages2')
           // Sort the messages by timestamp DESC because we want the newest messages on bottom.
           .orderBy("timestamp", descending: true)
           .snapshots(),
@@ -267,8 +277,7 @@ class MessagesStream extends StatelessWidget {
 
         List<Widget> messageWidgets = snapshot.data!.docs.map<Widget>((m) {
           final data = m.data() as Map<String, dynamic>;
-          final messageText =
-              data['text'].replaceAll('!!!', '').replaceAll('###', '');
+          final messageText = data['text'];
           final messageSender = data['sender'];
           final currentUser = loggedInuser!.email;
           final timeStamp = data['timestamp'] as Timestamp;
