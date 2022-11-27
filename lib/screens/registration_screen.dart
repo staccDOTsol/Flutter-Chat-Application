@@ -18,7 +18,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _obscureText = true;
   bool showSpinner = false;
-  String? name;
+  late String name;
   late String email;
   late String password;
   final _text1 = TextEditingController();
@@ -74,13 +74,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               SizedBox(
                 height: 20.0,
               ),
-              Hero(
-                tag: 'logo',
-                child: Container(
-                  height: 100.0,
-                  child: Image.asset('images/logo.png'),
-                ),
-              ),
               SizedBox(
                 height: 38.0,
               ),
@@ -123,15 +116,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         showSpinner = true;
                       });
                       try {
-                        final newUser =
-                            await _auth.createUserWithEmailAndPassword(
-                                email: email, password: password);
-                        if (newUser != null) {
-                          Navigator.pushNamed(context, ChatScreen.id);
-                          setState(() {
-                            showSpinner = false;
-                          });
-                        }
+                        final user = await _auth.createUserWithEmailAndPassword(
+                            email: email, password: password);
+                        Navigator.pushNamed(context, ChatScreen.id,
+                            arguments: ChatArguments(name));
+                        setState(() {
+                          showSpinner = false;
+                        });
                       } catch (e) {
                         print(e);
                       }

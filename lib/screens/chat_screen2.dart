@@ -1,101 +1,38 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:letschat/components/constants.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:letschat/widgets/or_divider.dart';
+import 'package:letschat/widgets/tabbutton_widget.dart';
 import 'package:letschat/components/colors.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:page_transition/page_transition.dart';
+import 'login_screen.dart';
+import 'chat_screen3.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:letschat/widgets/social_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firestore = FirebaseFirestore.instance;
 User? loggedInuser;
-final focusNode = FocusNode();
 
-class ChatScreen2 extends StatefulWidget {
-  static String id = 'chat_screen2';
-
+class Continue extends StatefulWidget {
+  static String id = 'continue';
   @override
-  _ChatScreen2State createState() => _ChatScreen2State();
+  _ContinueState createState() => _ContinueState();
 }
 
-class _ChatScreen2State extends State<ChatScreen2> {
-  final controller = TextEditingController();
+class _ContinueState extends State<Continue> {
+  bool _obscureText = false;
+  bool showSpinner = false;
+  late String option;
+  late String size;
+  late String where;
+  late String freq;
+  final _text1 = TextEditingController();
+  final _text2 = TextEditingController();
+  final _text3 = TextEditingController();
+  final _text4 = TextEditingController();
+
+  bool _validate = false;
   final _auth = FirebaseAuth.instance;
-  bool isEmojiVisible = false;
-  bool isKeyboardVisible = false;
-  var messageText;
-  static String topic = 'Minecraft';
-  Future<String> fetchAlbum() async {
-    var uuid = loggedInuser!.uid;
-
-    final response = await http.get(Uri.parse(Uri.encodeFull(
-        'https://newapps.herokuapp.com/?uuid=' +
-            uuid +
-            '&topic=' +
-            this.getTopic() +
-            '&question=' +
-            messageText)));
-    if (response.statusCode == 200) {
-      return await response.body;
-    } else {
-      throw Exception('Failed to load album');
-    }
-  }
-
-  String getTopic() {
-    try {
-      return topic;
-    } catch (e) {
-      return (e.toString());
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-    var keyboardVisibilityController = KeyboardVisibilityController();
-    keyboardVisibilityController.onChange.listen((bool isKeyboardVisible) {
-      setState(() {
-        this.isKeyboardVisible = isKeyboardVisible;
-      });
-
-      if (isKeyboardVisible && isEmojiVisible) {
-        setState(() {
-          isEmojiVisible = false;
-        });
-      }
-    });
-  }
-
-  Future toggleEmojiKeyboard() async {
-    if (isKeyboardVisible) {
-      FocusScope.of(context).unfocus();
-    }
-
-    setState(() {
-      isEmojiVisible = !isEmojiVisible;
-    });
-  }
-
-  Future<bool> onBackPress() {
-    if (isEmojiVisible) {
-      toggleEmojiKeyboard();
-    } else {
-      Navigator.pop(context);
-    }
-
-    return Future.value(false);
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await _auth.signOut();
-  }
 
   void getCurrentUser() {
     try {
@@ -109,130 +46,196 @@ class _ChatScreen2State extends State<ChatScreen2> {
     }
   }
 
-  void onEmojiSelected(String emoji) => setState(() {
-        controller.text = controller.text + emoji;
-      });
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  @override
+  void dispose() {
+    _text1.dispose();
+    _text2.dispose();
+    _text3.dispose();
+    _text4.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget buildSticker() {
-      return EmojiPicker(
-        onEmojiSelected: (emoji, category) {
-          onEmojiSelected(category.emoji);
-        },
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/background.jpg'),
+          fit: BoxFit.cover,
         ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                _auth.signOut();
-                Navigator.pop(context);
-              }),
-        ],
-        title: Text('messages2'),
-        backgroundColor: PalletteColors.primaryRed,
       ),
-      body: SafeArea(
-        child: WillPopScope(
-          onWillPop: onBackPress,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+      constraints: BoxConstraints.expand(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text("Soon; magik..."),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
+        body: SafeArea(
+          child: ListView(
             children: <Widget>[
-              MessagesStream(),
-              Container(
-                width: double.infinity,
-                height: 50.0,
-                decoration: new BoxDecoration(
-                    border: new Border(
-                        top:
-                            new BorderSide(color: Colors.blueGrey, width: 0.5)),
-                    color: Colors.white),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Material(
-                      child: new Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 1.0),
-                        child: new IconButton(
-                          icon: new Icon(isEmojiVisible
-                              ? Icons.keyboard_rounded
-                              : Icons.emoji_emotions),
-                          onPressed: onClickedEmoji,
-                          color: Colors.blueGrey,
-                        ),
-                      ),
-                      color: Colors.white,
-                    ),
-                    Flexible(
-                      child: Container(
-                        child: TextField(
-                          textInputAction: TextInputAction.send,
-                          keyboardType: TextInputType.multiline,
-                          focusNode: focusNode,
-                          onSubmitted: (value) async {
-                            controller.clear();
-                            /*_firestore.collection('messages2').add({
-                              'sender': loggedInuser!.email,
-                              'text': messageText,
-                              'timestamp': Timestamp.now(),
-                            }); */
+              SizedBox(
+                height: 20.0,
+              ),
+              /*
+              Hero(
+                tag: 'logo',
+                child: Container(
+                  height: 100.0,
+                  child: Image.asset('images/logo.png'),
+                ),
+              ),*/
+              SizedBox(
+                height: 38.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: optionInput(),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: sizeInput(),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: whereInput(),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: freqInput(),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                child: Hero(
+                  tag: "button",
+                  child: TabButton(
+                    btnText: "Continue...",
+                    btnTxtColor: Colors.white,
+                    btnColor: PalletteColors.primaryRed,
+                    btnFunction: () async {
+                      (_text1.text.isEmpty ||
+                              _text2.text.isEmpty ||
+                              _text3.text.isEmpty ||
+                              _text4.text.isEmpty)
+                          ? _validate = true
+                          : _validate = false;
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      try {
+                        _firestore.collection(loggedInuser!.uid).add({
+                          "freq": freq,
+                          "option": option,
+                          "size": size,
+                          "where": where,
+                        });
 
-                            _firestore.collection('messages2').add({
-                              'sender': loggedInuser!.uid, //'RobloxBot',
-                              'text': await fetchAlbum(),
-                              'timestamp': Timestamp.now(),
-                            });
-                          },
-                          maxLines: null,
-                          controller: controller,
-                          onChanged: (value) {
-                            messageText = value;
-                          },
-                          style:
-                              TextStyle(color: Colors.blueGrey, fontSize: 15.0),
-                          decoration: kMessageTextFieldDecoration,
-                        ),
-                      ),
-                    ),
-                    Material(
-                      child: new Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 8.0),
-                        child: new IconButton(
-                          icon: new Icon(Icons.send),
-                          onPressed: () async {
-                            controller.clear();
-                            /*_firestore.collection('messages2').add({
-                              'sender': loggedInuser!.email,
-                              'text': messageText,
-                              'timestamp': Timestamp.now(),
-                            }); */
-
-                            _firestore.collection('messages2').add({
-                              'sender': loggedInuser!.uid, //'RobloxBot',
-                              'text': await fetchAlbum(),
-                              'timestamp': Timestamp.now(),
-                            });
-                          },
-                          color: Colors.blueGrey,
-                        ),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ],
+                        Navigator.pushNamed(context, Final.id);
+                        setState(() {
+                          showSpinner = false;
+                        });
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  ),
                 ),
               ),
-              (isEmojiVisible ? buildSticker() : Container()),
+              SizedBox(
+                height: 5.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account ?",
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              child: LoginScreen()));
+                    },
+                    child: Text(
+                      " Log In",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: PalletteColors.primaryRed,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 14.0,
+              ),
+              OrDivider(),
+              SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SocialIcon(
+                    colors: [
+                      Color(0xFF102397),
+                      Color(0xFF187adf),
+                      Color(0xFF00eaf8),
+                    ],
+                    icon: Icon(FontAwesome.facebook, color: Colors.white),
+                    onPressed: () {},
+                  ),
+                  SocialIcon(
+                    colors: [
+                      Color(0xFFff4f38),
+                      Color(0xFFff355d),
+                    ],
+                    icon: Icon(FontAwesome.google, color: Colors.white),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 30.0,
+              ),
             ],
           ),
         ),
@@ -240,136 +243,178 @@ class _ChatScreen2State extends State<ChatScreen2> {
     );
   }
 
-  void onClickedEmoji() async {
-    if (isEmojiVisible) {
-      focusNode.requestFocus();
-    } else if (isKeyboardVisible) {
-      await SystemChannels.textInput.invokeMethod('TextInput.hide');
-      await Future.delayed(Duration(milliseconds: 100));
-    }
-    toggleEmojiKeyboard();
-  }
-}
-
-String giveUsername(String email) {
-  return email.replaceAll(new RegExp(r'@g(oogle)?mail\.com$'), '');
-}
-
-class MessagesStream extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('messages2')
-          // Sort the messages by timestamp DESC because we want the newest messages on bottom.
-          .orderBy("timestamp", descending: true)
-          .snapshots(),
-      builder: (context, snapshot) {
-        // If we do not have data yet, show a progress indicator.
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        // Create the list of message widgets.
-
-        // final messages = snapshot.data.documents.reversed;
-
-        List<Widget> messageWidgets = snapshot.data!.docs.map<Widget>((m) {
-          final data = m.data() as Map<String, dynamic>;
-          final messageText = data['text'];
-          final messageSender = data['sender'];
-          final currentUser = loggedInuser!.email;
-          final timeStamp = data['timestamp'] as Timestamp;
-          if (messageText.toString().contains('arweave')) {
-            return Image.network(messageText);
-          }
-          return MessageBubble(
-            sender: messageSender,
-            text: messageText,
-            timestamp: timeStamp,
-            isMe: currentUser == messageSender,
-          );
-        }).toList();
-
-        return Expanded(
-          child: ListView(
-            reverse: true,
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            children: messageWidgets,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class MessageBubble extends StatelessWidget {
-  MessageBubble({this.sender, this.text, this.timestamp, this.isMe});
-  final String? sender;
-  final String? text;
-  final Timestamp? timestamp;
-  final bool? isMe;
-
-  @override
-  Widget build(BuildContext context) {
-    final dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp!.seconds * 1000);
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment:
-            isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "${giveUsername(sender!)}",
-            style: TextStyle(fontSize: 12.0, color: Colors.black54),
-          ),
-          Material(
-            borderRadius: isMe!
-                ? BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    topLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                  )
-                : BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                  ),
-            elevation: 5.0,
-            color:
-                isMe! ? PalletteColors.primaryGrey : PalletteColors.lightBlue,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment:
-                    isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    text!,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: isMe! ? Colors.white : Colors.black54,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6.0),
-                    child: Text(
-                      "${DateFormat('h:mm a').format(dateTime)}",
-                      style: TextStyle(
-                        fontSize: 9.0,
-                        color: isMe!
-                            ? Colors.white.withOpacity(0.5)
-                            : Colors.black54.withOpacity(0.5),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+  Widget optionInput() {
+    return Theme(
+      child: TextField(
+        onChanged: (value) {
+          option = value;
+        },
+        controller: _text2,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          labelText: "Heating Oil or Propane?",
+          // errorText: _validate ? 'Please Enter your name' : null,
+          prefixIcon: Icon(Icons.question_answer_outlined),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
             ),
           ),
-        ],
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+        ),
+        textInputAction: TextInputAction.next,
+      ),
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
+      ),
+    );
+  }
+
+  Widget sizeInput() {
+    return Theme(
+      child: TextField(
+        onChanged: (value) {
+          size = value;
+        },
+        controller: _text1,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          labelText: "Size of Tank in Litres",
+          // errorText: _validate ? 'Please Enter your name' : null,
+          prefixIcon: Icon(Icons.numbers_outlined),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+        ),
+        textInputAction: TextInputAction.next,
+      ),
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
+      ),
+    );
+  }
+
+  Widget whereInput() {
+    return Theme(
+      child: TextField(
+        onChanged: (value) {
+          where = value;
+        },
+        controller: _text3,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          labelText: "Whereabouts wrt house is the tank?",
+          // errorText: _validate ? 'Please Enter your name' : null,
+          prefixIcon: Icon(Icons.question_answer_outlined),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+        ),
+        textInputAction: TextInputAction.next,
+      ),
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
+      ),
+    );
+  }
+
+  Widget freqInput() {
+    return Theme(
+      child: TextField(
+        onChanged: (value) {
+          freq = value;
+        },
+        controller: _text4,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          labelText: "# times you would need a fill per year",
+          // errorText: _validate ? 'Please Enter your name' : null,
+          prefixIcon: Icon(Icons.numbers_outlined),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(
+                color: Colors.red,
+              )),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          errorStyle: TextStyle(fontSize: 14),
+        ),
+        textInputAction: TextInputAction.done,
+      ),
+      data: Theme.of(context).copyWith(
+        accentColor: PalletteColors.primaryRed,
       ),
     );
   }

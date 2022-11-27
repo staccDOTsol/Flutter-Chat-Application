@@ -61,6 +61,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              /*
               Row(
                 children: <Widget>[
                   Padding(
@@ -74,10 +75,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     ),
                   ),
                 ],
-              ),
+              ), */
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 10),
-                child: Text("Instantly chat about any topic!",
+                child: Text("Save time && money...",
                     style: GoogleFonts.lato(
                       textStyle: TextStyle(
                           color: Colors.white,
@@ -88,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30, top: 0.8),
                 child: Text(
-                    "Shaping the future through chat.Keep your favourites a touch away",
+                    "...pay a low subscription rate and have your heating oil filled full a few times a year :)",
                     style: GoogleFonts.lato(
                       textStyle: TextStyle(
                           color: Colors.white, fontSize: 18.0, height: 1.5),

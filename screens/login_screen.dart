@@ -4,6 +4,7 @@ import 'package:letschat/widgets/tabbutton_widget.dart';
 import 'package:letschat/components/colors.dart';
 import 'package:page_transition/page_transition.dart';
 import 'chat_screen.dart';
+
 import 'chat_screen2.dart';
 import 'chat_screen3.dart';
 
@@ -99,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                 child: Hero(
-                  tag: "button2",
+                  tag: "button",
                   child: TabButton(
                     btnColor: PalletteColors.primaryRed,
                     btnTxtColor: Colors.white,
@@ -156,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             await _auth.signInWithEmailAndPassword(
                                 email: email, password: password);
                         if (loggedInUser != null) {
-                          Navigator.pushNamed(context, ChatScreen2.id);
+                          Navigator.pushNamed(context, Continue.id);
                           setState(() {
                             // showSpinner = false;
                           });
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                 child: Hero(
-                  tag: "button2",
+                  tag: "button3",
                   child: TabButton(
                     btnColor: PalletteColors.primaryRed,
                     btnTxtColor: Colors.white,
@@ -192,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             await _auth.signInWithEmailAndPassword(
                                 email: email, password: password);
                         if (loggedInUser != null) {
-                          Navigator.pushNamed(context, ChatScreen3.id);
+                          Navigator.pushNamed(context, Final.id);
                           setState(() {
                             // showSpinner = false;
                           });
